@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Контакты — American Series">
+<title>Контакты | American Series</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+<div class="wrap nav">
+<a class="logo" href="index.html">AMERICAN<span> SERIES</span></a>
+<nav>
+<a href="index.html">Главная</a>
+<a href="catalog.html">Каталог</a>
+<a class="active" href="contacts.html">Контакты</a>
+</nav>
+</div>
+</header>
+
+<section class="hero">
+<div class="wrap">
+<div class="eyebrow">Свяжитесь с нами</div>
+<h1>Контакты</h1>
+<p>Оставьте сообщение — мы ответим. Все поля обязательны.</p>
+</div>
+</section>
+
+<main class="wrap">
+<div class="content">
+<h2>Форма обратной связи</h2>
+
+<form class="contact-form" id="contactForm" novalidate>
+  <div>
+    <label for="fio">ФИО</label>
+    <input type="text" id="fio" name="fio" required
+      placeholder="Иванов Иван Иванович"
+      pattern="^[А-ЯЁа-яё]+(?:[-\s][А-ЯЁа-яё]+){1,2}$"
+      title="2 или 3 слова кириллицей">
+    <small class="field-hint" id="fio-hint">Только кириллица, 2–3 слова</small>
+  </div>
+
+  <div>
+    <label for="phone">Номер телефона</label>
+    <input type="tel" id="phone" name="phone" required
+      placeholder="+996 700 123 456"
+      pattern="^(\+996|0)[\s\-]?\(?\d{3}\)?[\s\-]?\d{3}[\s\-]?\d{3}$"
+      title="Формат: +996 или 0, затем 9 цифр">
+    <small class="field-hint" id="phone-hint">+996 или 0, затем 9 цифр (пробелы, скобки, дефисы допустимы)</small>
+  </div>
+
+  <div>
+    <label for="email">Почта</label>
+    <input type="email" id="email" name="email" required
+      placeholder="name@example.com"
+      pattern="^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$"
+      title="Корректный email">
+    <small class="field-hint" id="email-hint">Стандартный формат email</small>
+  </div>
+
+  <div>
+    <label for="message">Сообщение</label>
+    <textarea id="message" name="message" required placeholder="Ваше сообщение..." minlength="10"></textarea>
+  </div>
+
+  <button type="submit">Отправить</button>
+</form>
+
+<div id="formResult" class="notice" style="display:none; margin-top:20px;"></div>
+
+<div style="margin-top:40px;">
+</div>
+</div>
+</main>
+
+<footer>
+<div class="wrap foot">
+<span>© 2026 American Series · Учебный проект</span>
+<span>Сайт о шедеврах американского телевидения</span>
+</div>
+</footer>
+
+<script>
+(function () {
+  const form = document.getElementById('contactForm');
+  const result = document.getElementById('formResult');
+
+  const patterns = {
+    fio: /^[А-ЯЁа-яё]+(?:[-\s][А-ЯЁа-яё]+){1,2}$/,
+    phone: /^(\+996|0)[\s\-]?\(?\d{3}\)?[\s\-]?\d{3}[\s\-]?\d{3}$/,
+    email: /^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/
+  };
+
+  function showError(input, message) {
+    input.classList.add('invalid');
+    input.classList.remove('valid');
+    const hint = document.getElementById(input.id + '-hint');
+    if (hint) {
+      hint.textContent = message;
+      hint.style.color = '#e50914';
+    }
+  }
+
+  function showSuccess(input) {
+    input.classList.remove('invalid');
+    input.classList.add('valid');
+    const hint = document.getElementById(input.id + '-hint');
+    if (hint) hint.style.color = '#62e6a0';
+  }
+
+  function validateField(input) {
+    const value = input.value.trim();
+    if (!value) {
+      showError(input, 'Поле обязательно');
+      return false;
+    }
+    if (patterns[input.name] && !patterns[input.name].test(value)) {
+      const msg = {
+        fio: 'ФИО: 2–3 слова кириллицей',
+        phone: 'Телефон: +996 или 0 и 9 цифр',
+        email: 'Неверный email'
+      };
+      showError(input, msg[input.name] || 'Ошибка');
+      return false;
+    }
+    showSuccess(input);
+    return true;
+  }
+
+  ['fio', 'phone', 'email'].forEach(function (id) {
+    var el = document.getElementById(id);
+    el.addEventListener('blur', function () { validateField(el); });
+  });
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var ok = true;
+    ['fio', 'phone', 'email'].forEach(function (id) {
+      if (!validateField(document.getElementById(id))) ok = false;
+    });
+
+    var msg = document.getElementById('message');
+    if (msg.value.trim().length < 10) {
+      ok = false;
+      msg.classList.add('invalid');
+    } else {
+      msg.classList.remove('invalid');
+      msg.classList.add('valid');
+    }
+
+    result.style.display = 'block';
+    if (ok) {
+      result.style.borderColor = '#32654a';
+      result.innerHTML = '<strong style="color:#62e6a0">✓ Форма успешно проверена!</strong><br>ФИО, телефон и почта соответствуют регулярным выражениям.';
+    } else {
+      result.style.borderColor = '#e50914';
+      result.innerHTML = '<strong style="color:#e50914">✗ Исправьте ошибки в форме.</strong>';
+    }
+  });
+})();
+</script>
+</body>
+</html>
